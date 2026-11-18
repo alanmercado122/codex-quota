@@ -1,0 +1,26 @@
+﻿export component QuotaPanel inherits Window {
+    width: 145px;
+    height: 44px;
+    no-frame: true;
+    background: transparent;
+    default-font-family: "Segoe UI";
+    default-font-size: 12px;
+    title: "Codex Quota";
+    in property <color> ink: #ffffff;
+    in property <color> subtle: #b8b8b8;
+    in property <color> progress-ink: #bbbbbb;
+    in property <string> five-label: "--";
+    in property <string> week-label: "--";
+    in property <float> five-value: 0;
+    in property <float> week-value: 0;
+    in property <bool> stale: false;
+
+    in property <bool> pixel-icon: false;
+    Image { x: 6px; y: 10px; width: 24px; height: 24px; source: root.pixel-icon ? @image-url("../assets/meter-pixel.svg") : @image-url("../assets/meter.svg"); image-fit: contain; colorize: root.ink; }
+    Text { x: 38px; y: 1px; width: 54px; height: 16px; text: "5h"; font-weight: 600; color: root.ink; }
+    Text { x: 94px; y: 1px; width: 43px; height: 16px; text: root.five-label; horizontal-alignment: right; font-weight: 600; color: root.stale ? root.subtle : root.ink; }
+    Rectangle { x: 38px; y: 18px; width: 99px * root.five-value; height: 1px; background: root.stale ? root.subtle : root.progress-ink; }
+    Text { x: 38px; y: 23px; width: 54px; height: 16px; text: "Weekly"; font-weight: 600; color: root.ink; }
+    Text { x: 94px; y: 23px; width: 43px; height: 16px; text: root.week-label; horizontal-alignment: right; font-weight: 600; color: root.stale ? root.subtle : root.ink; }
+    Rectangle { x: 38px; y: 40px; width: 99px * root.week-value; height: 1px; background: root.stale ? root.subtle : root.progress-ink; }
+}

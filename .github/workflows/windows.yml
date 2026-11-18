@@ -1,0 +1,55 @@
+name: Windows build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-2025
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Build and test
+        shell: pwsh
+        run: |
+          rustup update stable
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          rustup default stable-x86_64-pc-windows-msvc
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          ./build-rust.ps1 -Test
+      - name: Package
+        shell: pwsh
+        run: |
+          Copy-Item LICENSE dist/
+          Copy-Item assets/NOTICE.md dist/
+          Compress-Archive -Path dist/CodexQuota.exe,dist/LICENSE,dist/NOTICE.md -DestinationPath CodexQuota-windows-x64.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CodexQuota-windows-x64
+          path: CodexQuota-windows-x64.zip
+          if-no-files-found: error
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: CodexQuota-windows-x64
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" CodexQuota-windows-x64.zip \
+            --repo "$GITHUB_REPOSITORY" --verify-tag --draft \
+            --notes '[![Made with Slint](https://raw.githubusercontent.com/slint-ui/slint/master/logo/MadeWithSlint-logo-whitebg.png)](https://slint.dev/)'

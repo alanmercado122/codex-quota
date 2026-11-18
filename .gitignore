@@ -1,0 +1,17 @@
+dist/
+protocol/
+target/
+/.env
+/.env.*
+/probe-rust.json
+/smoke-rust.json
+/error-rust.txt
+/rust-preview-*.png
+
+# Local notes and icon experiments
+/docs/portabilidad.md
+/docs/validacion-rust.md
+/assets/codex.svg
+/assets/openai.svg
+/assets/openai-pixel.svg
+/assets/lobe-icons-LICENSE
